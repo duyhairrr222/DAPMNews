@@ -1,0 +1,96 @@
+﻿@model FineBlog.ViewModels.HomeVM
+@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+
+@{
+    ViewData["Title"] = "Home Page";
+    string thumbnailUrl = "";
+    if(Model.ThumbnailUrl == "")
+    {
+        thumbnailUrl = "/blog/assets/img/home-bg.jpg";
+    }
+    else
+    {
+        thumbnailUrl = "/thumbnails/" + Model.ThumbnailUrl;
+    }
+}
+
+
+<section class="main-content">
+	<div class="container-xl">
+
+		<div class="row gy-4">
+
+			<div class="col-lg-12">
+
+				<div class="row gy-4">
+					
+						@foreach (var item in Model.Posts!)
+						{
+							<div class="col-sm-4">
+
+								<div class="post post-grid rounded bordered">
+									<div class="thumb top-rounded">
+										<span class="post-format">
+											<i class="icon-picture"></i>
+										</span>
+								<a asp-controller="Blog" asp-action="Post" asp-route-slug="@item.Slug">
+											<div class="inner">
+												<img  src="~/thumbnails/@item.ThumbnailUrl" alt="@item.Title" />
+											</div>
+										</a>
+									</div>
+									<div class="details">
+										<ul class="meta list-inline mb-0">
+										<li class="list-inline-item"><a href="#">@item.ApplicationUser!.FirstName @item.ApplicationUser!.LastName</a></li>
+											<li class="list-inline-item">@item.CreatedDate</li>
+										</ul>
+									<h5 class="post-title mb-3 mt-3"><a asp-controller="Blog" asp-action="Post" asp-route-slug="@item.Slug">@item.Title</a></h5>
+										<p class="excerpt mb-0">@item.ShortDescription</p>
+									</div>
+									<div class="post-bottom clearfix d-flex align-items-center">
+										<div class="social-share me-auto">
+											<button class="toggle-button icon-share"></button>
+											<ul class="icons list-unstyled list-inline mb-0">
+												<li class="list-inline-item"><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+												<li class="list-inline-item"><a href="#"><i class="fab fa-twitter"></i></a></li>
+												<li class="list-inline-item"><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
+												<li class="list-inline-item"><a href="#"><i class="fab fa-pinterest"></i></a></li>
+												<li class="list-inline-item"><a href="#"><i class="fab fa-telegram-plane"></i></a></li>
+												<li class="list-inline-item"><a href="#"><i class="far fa-envelope"></i></a></li>
+											</ul>
+										</div>
+										<div class="more-button float-end">
+											<a href="blog-single.html"><span class="icon-options"></span></a>
+										</div>
+									</div>
+								</div>
+							</div>
+						}
+					
+				</div>
+
+				Page @(Model?.Posts.PageCount < Model?.Posts.PageNumber ? 0 : Model?.Posts.PageNumber) of @Model?.Posts.PageCount
+				@Html.PagedListPager(Model?.Posts,page => Url.Action("Index",
+				new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }),
+				new PagedListRenderOptions()
+				{
+				ContainerDivClasses = new List<string> {"d-flex justify-content-start mb-4"},
+				UlElementClasses = new List<string> {"pagination"},
+				LiElementClasses = new List<string> {"btn btn-primary mx-1 text-uppercase"},
+				ActiveLiElementClass =  "active",
+				})
+
+			</div>
+			<div class="col-lg-4">
+
+				<!-- sidebar -->
+			
+
+			</div>
+
+		</div>
+
+	</div>
+</section>

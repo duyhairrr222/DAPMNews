@@ -1,0 +1,58 @@
+﻿@model FineBlog.ViewModels.BlogPostVM
+
+@{
+    string thumbnailUrl = "";
+
+    ViewData["Title"] = "Post";
+    thumbnailUrl = "/thumbnails/" + Model.ThumbnailUrl;
+
+    }
+@*//<header class="masthead" style="background-image: url('@thumbnailUrl')">
+//    <div class="container position-relative px-4 px-lg-5">
+//        <div class="row gx-4 gx-lg-5 justify-content-center">
+//            <div class="col-md-10 col-lg-8 col-xl-7">
+//                <div class="post-heading">
+//                    <h1>@Model.Title</h1>
+//                    <h2 class="subheading">@Model.ShortDescription</h2>
+//                    <span class="meta">
+//                        Posted by
+//                        <a href="#!">@Model.AuthorName</a>
+//                        on @Model.CreatedDate.ToShortDateString()
+//                    </span>
+//                </div>
+//            </div>
+//        </div>
+//    </div>
+//</header>*@
+<section class="main-content mt-3">
+    <div class="container-xl">
+
+            <div class="col-lg-12">
+                <!-- post single -->
+<div class="post post-single">
+    <!-- post header -->
+    <div class="post-header">
+        <h1 class="title mt-0 mb-3">@Model.Title</h1>
+        <ul class="meta list-inline mb-0">
+            <li class="list-inline-item">@Model.AuthorName on @Model.CreatedDate.ToShortDateString()</li>
+        </ul>
+    </div>
+    <div class="mb-4">
+                <img src="~/thumbnails/@Model.ThumbnailUrl" alt="post-title" />
+
+    </div>
+    </div>
+<!-- Post Content-->
+
+</div>
+        <article class="">
+            <div class="container">
+                <div class="row gx-4 gx-lg-5">
+                    <div class="col-md-10 ">
+                        @Html.Raw(Model.Description)
+                    </div>
+                </div>
+            </div>
+        </article>
+</div>
+</section>
