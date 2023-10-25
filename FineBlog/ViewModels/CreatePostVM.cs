@@ -12,6 +12,9 @@ namespace FineBlog.ViewModels
         public string? ApplicationUserId { get; set; }
         public string? Description { get; set; }
         public string? ThumbnailUrl { get; set; }
+        public float? Prices { get; set; }
+
+        public int? CateID;
         public IFormFile? Thumbnail { get; set; }
     }
 }

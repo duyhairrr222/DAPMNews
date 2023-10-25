@@ -48,6 +48,8 @@
 										</ul>
 									<h5 class="post-title mb-3 mt-3"><a asp-controller="Blog" asp-action="Post" asp-route-slug="@item.Slug">@item.Title</a></h5>
 										<p class="excerpt mb-0">@item.ShortDescription</p>
+									<span class="text-muted">@item.Prices</span>
+									<a asp-controller="Post" asp-action="AddToCart" class="btn btn-secondary btn-sm float-right">Đặt hàng</a>
 									</div>
 									<div class="post-bottom clearfix d-flex align-items-center">
 										<div class="social-share me-auto">

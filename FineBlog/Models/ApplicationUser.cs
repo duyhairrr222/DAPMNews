@@ -9,5 +9,6 @@ namespace FineBlog.Models
 
         //relation
         public List<Post>? Posts { get; set; }
+        public List<Category > Categories { get; set; }
     }
 }

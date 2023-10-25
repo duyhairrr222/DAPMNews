@@ -6,6 +6,8 @@
         public string? Title { get; set; }
         public string? AuthorName { get; set; }
         public DateTime CreatedDate { get; set; }
+        public float? Prices { get; set; }
+
         public string? ThumbnailUrl { get; set; }
     }
 }

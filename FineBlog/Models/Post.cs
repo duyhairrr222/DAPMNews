@@ -5,8 +5,12 @@
         public int Id { get; set; }
         public string? Title { get; set; }
         public string? ShortDescription { get; set; }
+        public float ? Prices { get; set; }
         //relation
         public string? ApplicationUserId { get; set; }
+
+        public int? CateID { get; set; }
+        public Category? Category { get; set; }
         public ApplicationUser? ApplicationUser { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public string? Description { get; set; }

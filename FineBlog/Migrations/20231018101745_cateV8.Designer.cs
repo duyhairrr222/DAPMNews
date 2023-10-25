@@ -4,6 +4,7 @@ using FineBlog.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FineBlog.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231018101745_cateV8")]
+    partial class cateV8
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,15 +32,7 @@ namespace FineBlog.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int?>("CateID"), 1L, 1);
 
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("catename")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("CateID");
-
-                    b.HasIndex("ApplicationUserId");
 
                     b.ToTable("Categorys");
                 });
@@ -90,9 +84,6 @@ namespace FineBlog.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("Prices")
-                        .HasColumnType("int");
 
                     b.Property<string>("ShortDescription")
                         .HasColumnType("nvarchar(max)");
@@ -366,15 +357,6 @@ namespace FineBlog.Migrations
                     b.HasDiscriminator().HasValue("ApplicationUser");
                 });
 
-            modelBuilder.Entity("FineBlog.Models.Category", b =>
-                {
-                    b.HasOne("FineBlog.Models.ApplicationUser", "ApplicationUser")
-                        .WithMany("Categories")
-                        .HasForeignKey("ApplicationUserId");
-
-                    b.Navigation("ApplicationUser");
-                });
-
             modelBuilder.Entity("FineBlog.Models.Post", b =>
                 {
                     b.HasOne("FineBlog.Models.ApplicationUser", "ApplicationUser")
@@ -448,8 +430,6 @@ namespace FineBlog.Migrations
 
             modelBuilder.Entity("FineBlog.Models.ApplicationUser", b =>
                 {
-                    b.Navigation("Categories");
-
                     b.Navigation("Posts");
                 });
 #pragma warning restore 612, 618

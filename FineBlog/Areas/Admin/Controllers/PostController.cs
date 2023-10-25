@@ -1,5 +1,6 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using FineBlog.Data;
+using FineBlog.Migrations;
 using FineBlog.Models;
 using FineBlog.Utilites;
 using FineBlog.ViewModels;
@@ -7,6 +8,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System.Globalization;
 using X.PagedList;
 
 namespace FineBlog.Areas.Admin.Controllers
@@ -19,6 +22,7 @@ namespace FineBlog.Areas.Admin.Controllers
         public INotyfService _notification { get; }
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly UserManager<ApplicationUser> _userManager;
+
 
         public PostController(ApplicationDbContext context,
                                 INotyfService notyfService,
@@ -53,6 +57,7 @@ namespace FineBlog.Areas.Admin.Controllers
                 Title = x.Title,
                 CreatedDate = x.CreatedDate,
                 ThumbnailUrl = x.ThumbnailUrl,
+                Prices = x.Prices,
                 AuthorName = x.ApplicationUser!.FirstName + " " + x.ApplicationUser.LastName
             }).ToList();
 
@@ -81,6 +86,7 @@ namespace FineBlog.Areas.Admin.Controllers
             post.Title = vm.Title;
             post.Description = vm.Description;
             post.ShortDescription = vm.ShortDescription;
+            post.Prices = vm.Prices;
             post.ApplicationUserId = loggedInUser!.Id;
 
             if (post.Title != null)
@@ -141,6 +147,7 @@ namespace FineBlog.Areas.Admin.Controllers
             {
                 Id = post.Id,
                 Title = post.Title,
+                Prices = post.Prices,
                 ShortDescription = post.ShortDescription,
                 Description = post.Description,
                 ThumbnailUrl = post.ThumbnailUrl,
@@ -163,6 +170,7 @@ namespace FineBlog.Areas.Admin.Controllers
             post.Title = vm.Title;
             post.ShortDescription = vm.ShortDescription;
             post.Description = vm.Description;
+            post.Prices = vm.Prices;
 
             if (vm.Thumbnail != null)
             {
@@ -187,6 +195,93 @@ namespace FineBlog.Areas.Admin.Controllers
             }
             return uniqueFileName;
         }
+        public const string CARTKEY = "cart";
 
+        List<CartItem> GetCartItems()
+        {
+
+            var session = HttpContext.Session;
+            string jsoncart = session.GetString(CARTKEY);
+            if (jsoncart != null)
+            {
+                return JsonConvert.DeserializeObject<List<CartItem>>(jsoncart);
+            }
+            return new List<CartItem>();
+        }
+        void ClearCart()
+        {
+            var session = HttpContext.Session;
+            session.Remove(CARTKEY);
+        }
+
+        // Lưu Cart (Danh sách CartItem) vào session
+        void SaveCartSession(List<CartItem> ls)
+        {
+            var session = HttpContext.Session;
+            string jsoncart = JsonConvert.SerializeObject(ls);
+            session.SetString(CARTKEY, jsoncart);
+        }
+        public IActionResult AddToCart( int postid)
+        {
+
+            var post = _context.Posts
+                .Where(p => p.Id == postid)
+                .FirstOrDefault();
+            if (post == null)
+                return NotFound("Không có sản phẩm");
+
+            // Xử lý đưa vào Cart ...
+            var cart = GetCartItems();
+            var cartitem = cart.Find(p => p.post.Id == postid);
+            if (cartitem != null)
+            {
+                // Đã tồn tại, tăng thêm 1
+                cartitem.amount++;
+            }
+            else
+            {
+                //  Thêm mới
+                cart.Add(new CartItem() { amount = 1, post = post });
+            }
+
+            // Lưu cart vào Session
+            SaveCartSession(cart);
+            // Chuyển đến trang hiện thị Cart
+            return RedirectToAction("Cart", "Post", new { area = "Admin" });
+
+        }
+        public IActionResult Cart () {
+             return View (GetCartItems());
+         }
+        [HttpPost]
+        public IActionResult UpdateCart(int postid,int amount)
+        {
+            // Cập nhật Cart thay đổi số lượng quantity ...
+            var cart = GetCartItems();
+            var cartitem = cart.Find(p => p.post.Id == postid);
+            if (cartitem != null)
+            {
+                // Đã tồn tại, tăng thêm 1
+                cartitem.amount = amount;
+            }
+            SaveCartSession(cart);
+            // Trả về mã thành công (không có nội dung gì - chỉ để Ajax gọi)
+            return Ok();
+        }
+        public IActionResult RemoveCart(int postid)
+        {
+            var cart = GetCartItems();
+            var cartitem = cart.Find(p => p.post.Id == postid);
+            if (cartitem != null)
+            {
+                // Đã tồn tại, tăng thêm 1
+                cart.Remove(cartitem);
+            }
+
+            SaveCartSession(cart);
+            return RedirectToAction("Cart", "Post", new { area = "Admin" });
+
+        }
     }
+   
 }
